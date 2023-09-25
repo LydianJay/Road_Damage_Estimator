@@ -29,7 +29,7 @@ class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;
   const HomePage({Key? key, required this.cameras}) : super(key: key);
 
-  @override
+  
   Widget build(BuildContext ctx) {
     return Scaffold(
       appBar: AppBar(
@@ -46,7 +46,8 @@ class _state extends State<HomePage> {
   late CameraController camController;
   late Future<void> initControlerFuture;
   late Interpreter interpreter;
-  double value = 0;
+  List<double> value = List<double>.filled(4, 0);
+  String combinedText = "NO INFERENCE";
   Tensor? inputTensor;
   Tensor? outputTensor;
   @override
@@ -85,7 +86,7 @@ class _state extends State<HomePage> {
         // Scale the image to 200x200 pixels
         interpreter.allocateTensors();
         final scaledImage =
-            img.copyResize(capturedImage, width: 200, height: 200);
+            img.copyResize(capturedImage, width: 256, height: 256);
 
         final imageMatrix = List.generate(
           scaledImage.height,
@@ -93,19 +94,25 @@ class _state extends State<HomePage> {
             scaledImage.width,
             (x) {
               final pixel = scaledImage.getPixel(x, y);
-              return [pixel.r / 255, pixel.g / 255, pixel.b / 255];
+              return [pixel.r / 255.0, pixel.g / 255.0, pixel.b / 255.0];
             },
           ),
         );
 
-        print('image matrix: $imageMatrix');
+        
         final input = [imageMatrix];
-        final output = [List<double>.filled(1, 0)];
+        final output = [List<double>.filled(4, 0)];
 
         interpreter.run(input, output);
-        debugPrint('Output: $output');
+        print('Output: $output');
         setState(() {
-          value = output.first.first;
+          value = output.first;
+          combinedText = "";
+          List<String> className = ["asphalt","concrete","crack", "pothole"];
+          for (int i = 0; i < value.length; i++){
+            combinedText += "${className[i]} : ${value[i]}\n";
+          }
+
         });
       } else {
         debugPrint('Captured Image was null!');
@@ -141,7 +148,7 @@ class _state extends State<HomePage> {
                   onPressed: captureImage,
                   child: Text('Capture Image'),
                 ),
-                Text('$value'),
+                Text(combinedText),
               ],
             );
           } else {

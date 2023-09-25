@@ -1,2 +1,0 @@
-with_pothole
-without_pothole
