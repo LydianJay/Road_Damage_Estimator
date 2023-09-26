@@ -28,7 +28,6 @@ class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;
   const HomePage({Key? key, required this.cameras}) : super(key: key);
 
-  
   Widget build(BuildContext ctx) {
     return Scaffold(
       appBar: AppBar(
@@ -64,7 +63,7 @@ class _state extends State<HomePage> {
   loadModel() async {
     try {
       interpreter = await Interpreter.fromAsset('assets/model.tflite');
-      
+
       debugPrint("Assets loaded!");
     } catch (e) {
       debugPrint("ERROR loading assets: $e");
@@ -82,48 +81,46 @@ class _state extends State<HomePage> {
 
   Future<void> pickImage() async {
     final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery); // You can also use ImageSource.camera to open the camera.
+    final pickedImage = await picker.pickImage(
+        source: ImageSource
+            .gallery); // You can also use ImageSource.camera to open the camera.
     final path = pickedImage!.path;
     predict(path);
   }
 
-  Future<void> predict(String path) async{
-        final bytes = await File(path).readAsBytes();
-        final img.Image? capturedImage = img.decodeImage(bytes);
+  Future<void> predict(String path) async {
+    final bytes = await File(path).readAsBytes();
+    final img.Image? capturedImage = img.decodeImage(bytes);
 
-        if (capturedImage != null) {
-          
-          interpreter.allocateTensors();
-          final scaledImage =
-              img.copyResize(capturedImage, width: 256, height: 256);
+    if (capturedImage != null) {
+      interpreter.allocateTensors();
+      final scaledImage =
+          img.copyResize(capturedImage, width: 256, height: 256);
 
-          final imageMatrix = List.generate(
-            scaledImage.height,
-            (y) => List.generate(
-              scaledImage.width,
-              (x) {
-                final pixel = scaledImage.getPixel(x, y);
-                return [pixel.r / 255.0, pixel.g / 255.0, pixel.b / 255.0];
-              },
-            ),
-          );
+      final imageMatrix = List.generate(
+        scaledImage.height,
+        (y) => List.generate(
+          scaledImage.width,
+          (x) {
+            final pixel = scaledImage.getPixel(x, y);
+            return [pixel.r / 255.0, pixel.g / 255.0, pixel.b / 255.0];
+          },
+        ),
+      );
 
-          
-          final input = [imageMatrix];
-          final output = [List<double>.filled(4, 0)];
-          interpreter.run(input, output);
-          setState(() {
-            value = output.first;
-            combinedText = "";
-            List<String> className = ["asphalt","concrete","crack", "pothole"];
-            for (int i = 0; i < value.length; i++){
-              combinedText += "${className[i]} : ${value[i]}\n";
-            }
-
-          });
+      final input = [imageMatrix];
+      final output = [List<double>.filled(4, 0)];
+      interpreter.run(input, output);
+      setState(() {
+        value = output.first;
+        combinedText = "";
+        List<String> className = ["asphalt", "concrete", "crack", "pothole"];
+        for (int i = 0; i < value.length; i++) {
+          combinedText += "${className[i]} : ${value[i]}\n";
         }
-      }
-
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -147,7 +144,6 @@ class _state extends State<HomePage> {
                 Expanded(
                   child: CameraPreview(camController),
                 ),
-                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -165,7 +161,7 @@ class _state extends State<HomePage> {
               ],
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
