@@ -38,6 +38,7 @@ class _state extends State<HomePage> {
   late Interpreter interpreter;
   List<double> value = List<double>.filled(4, 0);
   String combinedText = "Capture";
+  late String imagePath;
   @override
   void initState() {
     super.initState();
@@ -65,6 +66,7 @@ class _state extends State<HomePage> {
   Future<void> captureImage() async {
     try {
       final image = await camController.takePicture();
+      imagePath = image.path;
       await predict(image.path);
     } catch (e) {
       debugPrint('Error Occured!: $e');
@@ -77,6 +79,7 @@ class _state extends State<HomePage> {
         source: ImageSource
             .gallery); // You can also use ImageSource.camera to open the camera.
     final path = pickedImage!.path;
+    imagePath = path;
     await predict(path);
   }
 
@@ -153,8 +156,10 @@ class _state extends State<HomePage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      Report(data: combinedText)));
+                                  builder: (context) => Report(
+                                        data: combinedText,
+                                        pathImg: imagePath,
+                                      )));
                         });
                       },
                       child: const Text('Capture'),
@@ -165,8 +170,8 @@ class _state extends State<HomePage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      Report(data: combinedText)));
+                                  builder: (context) => Report(
+                                      data: combinedText, pathImg: imagePath)));
                         });
                       },
                       child: const Text('Gallery'),

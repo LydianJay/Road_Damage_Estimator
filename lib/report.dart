@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 class Report extends StatefulWidget {
   final String data;
-  const Report({super.key, required this.data});
+  final String pathImg;
+  const Report({super.key, required this.data, required this.pathImg});
 
   @override
   State<Report> createState() => _ReportState();
@@ -11,16 +13,12 @@ class Report extends StatefulWidget {
 class _ReportState extends State<Report> {
   String textContent = "Fuck";
 
-  void updateValue() {
-    setState(() {
-      textContent = widget.data;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    updateValue();
+    setState(() {
+      textContent = widget.data;
+    });
   }
 
   @override
@@ -33,6 +31,12 @@ class _ReportState extends State<Report> {
       body: SafeArea(
         child: Column(
           children: [
+            Container(
+              width: 600.0, // Set the desired width
+              height: 400.0, // Set the desired height
+              child: Image.file(
+                  File(widget.pathImg)), // Replace with your image asset
+            ),
             Center(
               child: Text(textContent),
             ),
