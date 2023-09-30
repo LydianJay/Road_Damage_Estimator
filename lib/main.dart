@@ -4,6 +4,7 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
+import 'package:pothole/report.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(context) {
     return MaterialApp(
-      title: 'Road Reporting Tool',
+      title: 'Road Damage Estimator Tool',
       theme: ThemeData(primarySwatch: Colors.grey),
       home: HomePage(cameras: cameras),
     );
@@ -27,16 +28,6 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;
   const HomePage({Key? key, required this.cameras}) : super(key: key);
-
-  
-  Widget build(BuildContext ctx) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Road Damage Estimator"),
-      ),
-    );
-  }
-
   @override
   _state createState() => _state();
 }
@@ -46,7 +37,7 @@ class _state extends State<HomePage> {
   late Future<void> initControlerFuture;
   late Interpreter interpreter;
   List<double> value = List<double>.filled(4, 0);
-  String combinedText = "NO INFERENCE";
+  String combinedText = "Capture";
   @override
   void initState() {
     super.initState();
@@ -64,7 +55,7 @@ class _state extends State<HomePage> {
   loadModel() async {
     try {
       interpreter = await Interpreter.fromAsset('assets/model.tflite');
-      
+
       debugPrint("Assets loaded!");
     } catch (e) {
       debugPrint("ERROR loading assets: $e");
@@ -74,7 +65,7 @@ class _state extends State<HomePage> {
   Future<void> captureImage() async {
     try {
       final image = await camController.takePicture();
-      predict(image.path);
+      await predict(image.path);
     } catch (e) {
       debugPrint('Error Occured!: $e');
     }
@@ -82,48 +73,53 @@ class _state extends State<HomePage> {
 
   Future<void> pickImage() async {
     final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery); // You can also use ImageSource.camera to open the camera.
+    final pickedImage = await picker.pickImage(
+        source: ImageSource
+            .gallery); // You can also use ImageSource.camera to open the camera.
     final path = pickedImage!.path;
-    predict(path);
+    await predict(path);
   }
 
-  Future<void> predict(String path) async{
-        final bytes = await File(path).readAsBytes();
-        final img.Image? capturedImage = img.decodeImage(bytes);
+  Future<void> predict(String path) async {
+    final bytes = await File(path).readAsBytes();
+    final img.Image? capturedImage = img.decodeImage(bytes);
 
-        if (capturedImage != null) {
-          
-          interpreter.allocateTensors();
-          final scaledImage =
-              img.copyResize(capturedImage, width: 256, height: 256);
+    if (capturedImage != null) {
+      interpreter.allocateTensors();
+      final scaledImage =
+          img.copyResize(capturedImage, width: 256, height: 256);
 
-          final imageMatrix = List.generate(
-            scaledImage.height,
-            (y) => List.generate(
-              scaledImage.width,
-              (x) {
-                final pixel = scaledImage.getPixel(x, y);
-                return [pixel.r / 255.0, pixel.g / 255.0, pixel.b / 255.0];
-              },
-            ),
-          );
+      final imageMatrix = List.generate(
+        scaledImage.height,
+        (y) => List.generate(
+          scaledImage.width,
+          (x) {
+            final pixel = scaledImage.getPixel(x, y);
+            return [pixel.r / 255.0, pixel.g / 255.0, pixel.b / 255.0];
+          },
+        ),
+      );
 
-          
-          final input = [imageMatrix];
-          final output = [List<double>.filled(4, 0)];
-          interpreter.run(input, output);
-          setState(() {
-            value = output.first;
-            combinedText = "";
-            List<String> className = ["asphalt","concrete","crack", "pothole"];
-            for (int i = 0; i < value.length; i++){
-              combinedText += "${className[i]} : ${value[i]}\n";
-            }
-
-          });
+      final input = [imageMatrix];
+      final output = [List<double>.filled(6, 0)];
+      interpreter.run(input, output);
+      setState(() {
+        value = output.first;
+        combinedText = "";
+        List<String> className = [
+          'asphalt',
+          'concrete',
+          'crack',
+          'pothole',
+          'raveling',
+          'no_damage'
+        ];
+        for (int i = 0; i < value.length; i++) {
+          combinedText += "${className[i]} : ${value[i]}\n";
         }
-      }
-
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -136,7 +132,8 @@ class _state extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Road Reporting Tool'),
+        title: const Text('Road Estimator Tool'),
+        centerTitle: true,
       ),
       body: FutureBuilder<void>(
         future: initControlerFuture,
@@ -147,25 +144,39 @@ class _state extends State<HomePage> {
                 Expanded(
                   child: CameraPreview(camController),
                 ),
-                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: captureImage,
-                      child: Text('Capture Image'),
+                      onPressed: () {
+                        captureImage().then((value) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      Report(data: combinedText)));
+                        });
+                      },
+                      child: const Text('Capture'),
                     ),
                     ElevatedButton(
-                      onPressed: pickImage,
-                      child: Text('Gallery'),
+                      onPressed: () {
+                        pickImage().then((value) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      Report(data: combinedText)));
+                        });
+                      },
+                      child: const Text('Gallery'),
                     ),
                   ],
                 ),
-                Text(combinedText),
               ],
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
