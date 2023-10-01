@@ -4,6 +4,7 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
+import 'package:pothole/report.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(context) {
     return MaterialApp(
-      title: 'Road Reporting Tool',
+      title: 'Road Damage Estimator Tool',
       theme: ThemeData(primarySwatch: Colors.grey),
       home: HomePage(cameras: cameras),
     );
@@ -27,15 +28,6 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;
   const HomePage({Key? key, required this.cameras}) : super(key: key);
-
-  Widget build(BuildContext ctx) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Road Damage Estimator"),
-      ),
-    );
-  }
-
   @override
   _state createState() => _state();
 }
@@ -45,7 +37,8 @@ class _state extends State<HomePage> {
   late Future<void> initControlerFuture;
   late Interpreter interpreter;
   List<double> value = List<double>.filled(4, 0);
-  String combinedText = "NO INFERENCE";
+  String combinedText = "Capture";
+  late String imagePath;
   @override
   void initState() {
     super.initState();
@@ -53,7 +46,7 @@ class _state extends State<HomePage> {
 
     camController = CameraController(
       widget.cameras[0],
-      ResolutionPreset.high,
+      ResolutionPreset.veryHigh,
     );
     initControlerFuture = camController.initialize();
 
@@ -73,7 +66,8 @@ class _state extends State<HomePage> {
   Future<void> captureImage() async {
     try {
       final image = await camController.takePicture();
-      predict(image.path);
+      imagePath = image.path;
+      await predict(image.path);
     } catch (e) {
       debugPrint('Error Occured!: $e');
     }
@@ -85,7 +79,8 @@ class _state extends State<HomePage> {
         source: ImageSource
             .gallery); // You can also use ImageSource.camera to open the camera.
     final path = pickedImage!.path;
-    predict(path);
+    imagePath = path;
+    await predict(path);
   }
 
   Future<void> predict(String path) async {
@@ -109,12 +104,19 @@ class _state extends State<HomePage> {
       );
 
       final input = [imageMatrix];
-      final output = [List<double>.filled(4, 0)];
+      final output = [List<double>.filled(6, 0)];
       interpreter.run(input, output);
       setState(() {
         value = output.first;
         combinedText = "";
-        List<String> className = ["asphalt", "concrete", "crack", "pothole"];
+        List<String> className = [
+          'asphalt',
+          'concrete',
+          'crack',
+          'pothole',
+          'raveling',
+          'no_damage'
+        ];
         for (int i = 0; i < value.length; i++) {
           combinedText += "${className[i]} : ${value[i]}\n";
         }
@@ -131,33 +133,65 @@ class _state extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    double _screenwidth = MediaQuery.of(context).size.width;
+    double _screenheight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Road Reporting Tool'),
+        title: const Text('Road Estimator Tool'),
+        centerTitle: true,
       ),
       body: FutureBuilder<void>(
         future: initControlerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return Column(
+            return Stack(
               children: [
-                Expanded(
-                  child: CameraPreview(camController),
+                SizedBox(
+                  width: _screenwidth,
+                  height: _screenheight,
+                  child: AspectRatio(
+                    aspectRatio: camController.value.aspectRatio,
+                    child: CameraPreview(camController),
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: captureImage,
-                      child: Text('Capture Image'),
-                    ),
-                    ElevatedButton(
-                      onPressed: pickImage,
-                      child: Text('Gallery'),
-                    ),
-                  ],
+                Positioned(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              captureImage().then((value) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Report(
+                                            pathImg: imagePath,
+                                            value: this.value)));
+                              });
+                            },
+                            child: const Text('Capture'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              pickImage().then((value) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Report(
+                                            pathImg: imagePath,
+                                            value: this.value)));
+                              });
+                            },
+                            child: const Text('Gallery'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                Text(combinedText),
               ],
             );
           } else {
@@ -168,3 +202,44 @@ class _state extends State<HomePage> {
     );
   }
 }
+
+/* 
+  Positioned(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              captureImage().then((value) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Report(
+                                            pathImg: imagePath,
+                                            value: this.value)));
+                              });
+                            },
+                            child: const Text('Capture'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              pickImage().then((value) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Report(
+                                            pathImg: imagePath,
+                                            value: this.value)));
+                              });
+                            },
+                            child: const Text('Gallery'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+*/
