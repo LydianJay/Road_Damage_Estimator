@@ -133,8 +133,8 @@ class _state extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    double _screenwidth = MediaQuery.of(context).size.width;
-    double _screenheight = MediaQuery.of(context).size.height;
+    double scrWidth = MediaQuery.of(context).size.width;
+    double scrHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Road Estimator Tool'),
@@ -147,8 +147,8 @@ class _state extends State<HomePage> {
             return Stack(
               children: [
                 SizedBox(
-                  width: _screenwidth,
-                  height: _screenheight,
+                  width: scrWidth,
+                  height: scrHeight,
                   child: AspectRatio(
                     aspectRatio: camController.value.aspectRatio,
                     child: CameraPreview(camController),
@@ -202,44 +202,3 @@ class _state extends State<HomePage> {
     );
   }
 }
-
-/* 
-  Positioned(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              captureImage().then((value) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Report(
-                                            pathImg: imagePath,
-                                            value: this.value)));
-                              });
-                            },
-                            child: const Text('Capture'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              pickImage().then((value) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Report(
-                                            pathImg: imagePath,
-                                            value: this.value)));
-                              });
-                            },
-                            child: const Text('Gallery'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-*/
