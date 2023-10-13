@@ -35,7 +35,8 @@ class HomePage extends StatefulWidget {
 class _state extends State<HomePage> {
   late CameraController camController;
   late Future<void> initControlerFuture;
-  late Interpreter interpreter;
+  late Interpreter rTypeInterpreter;
+  late Interpreter dTypeInterpreter;
   List<double> value = List<double>.filled(4, 0);
   String combinedText = "Capture";
   late String imagePath;
@@ -55,8 +56,8 @@ class _state extends State<HomePage> {
 
   loadModel() async {
     try {
-      interpreter = await Interpreter.fromAsset('assets/model.tflite');
-
+      rTypeInterpreter = await Interpreter.fromAsset('assets/rType.tflite');
+      dTypeInterpreter = await Interpreter.fromAsset('assets/dType.tflite');
       debugPrint("Assets loaded!");
     } catch (e) {
       debugPrint("ERROR loading assets: $e");
@@ -88,7 +89,8 @@ class _state extends State<HomePage> {
     final img.Image? capturedImage = img.decodeImage(bytes);
 
     if (capturedImage != null) {
-      interpreter.allocateTensors();
+      rTypeInterpreter.allocateTensors();
+      dTypeInterpreter.allocateTensors();
       final scaledImage =
           img.copyResize(capturedImage, width: 256, height: 256);
 
@@ -104,29 +106,36 @@ class _state extends State<HomePage> {
       );
 
       final input = [imageMatrix];
-      final output = [List<double>.filled(6, 0)];
-      interpreter.run(input, output);
+      final rOut = [List<double>.filled(2, 0)];
+      final dOut = [List<double>.filled(4, 0)];
+      rTypeInterpreter.run(input, rOut);
+      dTypeInterpreter.run(input, dOut);
       setState(() {
-        value = output.first;
+        value = rOut.first;
+        List<double> value2 = dOut.first;
         combinedText = "";
-        List<String> className = [
+        List<String> rTypeName = [
           'asphalt',
           'concrete',
-          'crack',
-          'pothole',
-          'raveling',
-          'no_damage'
         ];
+
+        List<String> dTypeName = ['crack', 'pothole', 'raveling', 'no_damage'];
         for (int i = 0; i < value.length; i++) {
-          combinedText += "${className[i]} : ${value[i]}\n";
+          combinedText += "${rTypeName[i]} : ${value[i]}\n";
         }
+        for (int i = 0; i < value2.length; i++) {
+          combinedText += "${dTypeName[i]} : ${value2[i]}\n";
+          value.add(value2[i]);
+        }
+        debugPrint(combinedText);
       });
     }
   }
 
   @override
   void dispose() {
-    interpreter.close();
+    rTypeInterpreter.close();
+    dTypeInterpreter.close();
     camController.dispose();
     super.dispose();
   }

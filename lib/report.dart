@@ -26,9 +26,10 @@ class _ReportState extends State<Report> {
       ];
       for (int i = 0; i < widget.value.length; i++) {
         String text = "${className[i]} : ${widget.value[i]}";
-        double r = (widget.value[i] * 255.0);
-        double g = (255.0 - (widget.value[i] * 255.0));
-        Color color = Color.fromRGBO(r.toInt(), g.toInt(), r.toInt(), 1.0);
+        double v = (widget.value[i] * 255.0);
+        double iv = (255.0 - (widget.value[i] * 255.0));
+
+        Color color = Color.fromRGBO(iv.toInt(), v.toInt(), 0, 1.0);
         content.add(Container(
           margin: const EdgeInsets.all(5),
           padding: const EdgeInsets.all(5),
