@@ -38,7 +38,6 @@ class _state extends State<HomePage> {
   late Interpreter rTypeInterpreter;
   late Interpreter dTypeInterpreter;
   List<double> value = List<double>.filled(4, 0);
-  String combinedText = "Capture";
   late String imagePath;
   @override
   void initState() {
@@ -113,21 +112,10 @@ class _state extends State<HomePage> {
       setState(() {
         value = rOut.first;
         List<double> value2 = dOut.first;
-        combinedText = "";
-        List<String> rTypeName = [
-          'asphalt',
-          'concrete',
-        ];
 
-        List<String> dTypeName = ['crack', 'pothole', 'raveling', 'no_damage'];
-        for (int i = 0; i < value.length; i++) {
-          combinedText += "${rTypeName[i]} : ${value[i]}\n";
-        }
         for (int i = 0; i < value2.length; i++) {
-          combinedText += "${dTypeName[i]} : ${value2[i]}\n";
           value.add(value2[i]);
         }
-        debugPrint(combinedText);
       });
     }
   }
