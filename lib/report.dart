@@ -77,11 +77,7 @@ class _ReportState extends State<Report> {
   @override
   Widget build(BuildContext context) {
     double scrWidth = MediaQuery.of(context).size.width;
-    TextStyle basicStyle = const TextStyle(
-        color: Colors.black,
-        fontFamily: 'New Times Roman',
-        fontStyle: FontStyle.normal,
-        fontSize: 16);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Image Report"),
