@@ -18,6 +18,7 @@ class Report extends StatefulWidget {
 class _ReportState extends State<Report> {
   List<Widget> dTypeW = [];
   List<Widget> rTypeW = [];
+  late Widget procceedOption;
   @override
   void initState() {
     super.initState();
@@ -58,6 +59,7 @@ class _ReportState extends State<Report> {
               fontSize: 16),
         ));
       }
+      bool isDamage = false;
 
       for (var i = 0; i < dTypeName.length; i++) {
         String txt =
@@ -86,7 +88,7 @@ class _ReportState extends State<Report> {
       body: ListView(
         children: [
           Container(
-              padding: EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               decoration: const BoxDecoration(
                 color: Color.fromARGB(166, 196, 196, 202),
               ),
@@ -101,9 +103,10 @@ class _ReportState extends State<Report> {
                   margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                   width: scrWidth,
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(31, 53, 193, 228),
+                    color: const Color.fromARGB(31, 53, 193, 228),
                     borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Color.fromARGB(31, 39, 157, 187)),
+                    border: Border.all(
+                        color: const Color.fromARGB(31, 39, 157, 187)),
                   ),
                   child: Column(
                     children: rTypeW,
@@ -113,14 +116,16 @@ class _ReportState extends State<Report> {
                   margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                   width: scrWidth,
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(31, 53, 193, 228),
+                    color: const Color.fromARGB(31, 53, 193, 228),
                     borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Color.fromARGB(31, 39, 157, 187)),
+                    border: Border.all(
+                        color: const Color.fromARGB(31, 39, 157, 187)),
                   ),
                   child: Column(
                     children: dTypeW,
                   ),
-                )
+                ),
+                procceedOption,
               ],
             ),
           ),

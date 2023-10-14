@@ -10,6 +10,9 @@ class InputPanel extends StatefulWidget {
 class _InputPanelState extends State<InputPanel> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return SafeArea(
+        child: Container(
+      child: Text("Template"),
+    ));
   }
 }
