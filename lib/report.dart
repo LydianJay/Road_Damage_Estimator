@@ -125,7 +125,6 @@ class _ReportState extends State<Report> {
                     children: dTypeW,
                   ),
                 ),
-                procceedOption,
               ],
             ),
           ),
