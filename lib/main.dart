@@ -37,7 +37,8 @@ class _state extends State<HomePage> {
   late Future<void> initControlerFuture;
   late Interpreter rTypeInterpreter;
   late Interpreter dTypeInterpreter;
-  List<double> value = List<double>.filled(4, 0);
+  late List<double> rTypeVal;
+  late List<double> dTypeVal;
   late String imagePath;
   @override
   void initState() {
@@ -110,12 +111,8 @@ class _state extends State<HomePage> {
       rTypeInterpreter.run(input, rOut);
       dTypeInterpreter.run(input, dOut);
       setState(() {
-        value = rOut.first;
-        List<double> value2 = dOut.first;
-
-        for (int i = 0; i < value2.length; i++) {
-          value.add(value2[i]);
-        }
+        rTypeVal = rOut.first;
+        dTypeVal = dOut.first;
       });
     }
   }
@@ -165,8 +162,10 @@ class _state extends State<HomePage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => Report(
-                                            pathImg: imagePath,
-                                            value: this.value)));
+                                              pathImg: imagePath,
+                                              rType: rTypeVal,
+                                              dType: dTypeVal,
+                                            )));
                               });
                             },
                             child: const Text('Capture'),
@@ -178,8 +177,10 @@ class _state extends State<HomePage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => Report(
-                                            pathImg: imagePath,
-                                            value: this.value)));
+                                              pathImg: imagePath,
+                                              rType: rTypeVal,
+                                              dType: dTypeVal,
+                                            )));
                               });
                             },
                             child: const Text('Gallery'),

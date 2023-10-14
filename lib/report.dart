@@ -3,50 +3,72 @@ import 'dart:io';
 
 class Report extends StatefulWidget {
   final String pathImg;
-  final List<double> value;
-  const Report({super.key, required this.pathImg, required this.value});
+  final List<double> rType;
+  final List<double> dType;
+  const Report(
+      {super.key,
+      required this.pathImg,
+      required this.rType,
+      required this.dType});
 
   @override
   State<Report> createState() => _ReportState();
 }
 
 class _ReportState extends State<Report> {
-  late List<Widget> content = [];
+  List<Widget> dTypeW = [];
+  List<Widget> rTypeW = [];
   @override
   void initState() {
     super.initState();
     setState(() {
-      final List<String> className = [
-        'asphalt',
-        'concrete',
-        'crack',
-        'pothole',
-        'raveling',
-        'no_damage'
-      ];
-      for (int i = 0; i < widget.value.length; i++) {
-        String text =
-            "${className[i]} : ${(widget.value[i] * 100.0).toStringAsFixed(2)}";
-        double v = (widget.value[i] * 255.0);
-        double iv = (255.0 - (widget.value[i] * 255.0));
+      rTypeW.add(const Text(
+          style: TextStyle(
+              color: Color.fromARGB(255, 43, 10, 134),
+              fontFamily: 'New Times Roman',
+              fontStyle: FontStyle.normal,
+              fontSize: 24),
+          "Road Type"));
 
-        Color color = Color.fromRGBO(iv.toInt(), v.toInt(), 0, 1.0);
-        content.add(Container(
-          margin: const EdgeInsets.all(5),
-          padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(25.0)),
-            border: Border.all(color: color),
-          ),
-          child: Text(
-            text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: color,
-                fontFamily: 'New Times Roman',
-                fontStyle: FontStyle.normal,
-                fontSize: 16),
-          ),
+      dTypeW.add(const Text(
+          style: TextStyle(
+              color: Color.fromARGB(255, 43, 10, 134),
+              fontFamily: 'New Times Roman',
+              fontStyle: FontStyle.normal,
+              fontSize: 24),
+          "Damage Type"));
+      final List<String> rTypeName = ['Asphalt', 'Concrete'];
+
+      final List<String> dTypeName = [
+        'Crack',
+        'Pothole',
+        'Raveling',
+        'No Damage'
+      ];
+
+      for (var i = 0; i < rTypeName.length; i++) {
+        String txt =
+            "${rTypeName[i]}: prediction confidence -> ${(widget.rType[i] * 100).toStringAsFixed(2)}%";
+        rTypeW.add(Text(
+          txt,
+          style: const TextStyle(
+              color: Colors.black,
+              fontFamily: 'Arial',
+              fontStyle: FontStyle.normal,
+              fontSize: 16),
+        ));
+      }
+
+      for (var i = 0; i < dTypeName.length; i++) {
+        String txt =
+            "${dTypeName[i]}: prediction confidence -> ${(widget.dType[i] * 100).toStringAsFixed(2)}%";
+        dTypeW.add(Text(
+          txt,
+          style: const TextStyle(
+              color: Colors.black,
+              fontFamily: 'Arial',
+              fontStyle: FontStyle.normal,
+              fontSize: 16),
         ));
       }
     });
@@ -62,12 +84,17 @@ class _ReportState extends State<Report> {
         fontSize: 16);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Report"),
+        title: const Text("Image Report"),
         centerTitle: true,
       ),
       body: ListView(
         children: [
-          Image.file(File(widget.pathImg)),
+          Container(
+              padding: EdgeInsets.all(5),
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(166, 196, 196, 202),
+              ),
+              child: Image.file(File(widget.pathImg))),
           Container(
             decoration: const BoxDecoration(
               color: Color.fromARGB(166, 196, 196, 202),
@@ -75,35 +102,27 @@ class _ReportState extends State<Report> {
             child: Column(
               children: [
                 Container(
-                  margin: EdgeInsets.all(25),
+                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                   width: scrWidth,
                   decoration: BoxDecoration(
                     color: Color.fromARGB(31, 53, 193, 228),
+                    borderRadius: BorderRadius.circular(15),
                     border: Border.all(color: Color.fromARGB(31, 39, 157, 187)),
                   ),
                   child: Column(
-                    children: [
-                      const Text(
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 43, 10, 134),
-                              fontFamily: 'New Times Roman',
-                              fontStyle: FontStyle.normal,
-                              fontSize: 24),
-                          "Road Type"),
-                      Text(
-                        "Confidence 10%",
-                        style: basicStyle,
-                      ),
-                      Text(
-                        "Confidence 20%",
-                        style: basicStyle,
-                      ),
-                    ],
+                    children: rTypeW,
                   ),
                 ),
                 Container(
+                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  width: scrWidth,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(31, 53, 193, 228),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Color.fromARGB(31, 39, 157, 187)),
+                  ),
                   child: Column(
-                    children: [Text('Damage Type'), Text('Raveling')],
+                    children: dTypeW,
                   ),
                 )
               ],
