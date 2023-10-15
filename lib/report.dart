@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'input.dart';
 
 class Report extends StatefulWidget {
   final String pathImg;
@@ -59,9 +60,19 @@ class _ReportState extends State<Report> {
               fontSize: 16),
         ));
       }
-      bool isDamage = false;
 
+      int tIndex = widget.rType[0] >= widget.rType[1] ? 0 : 1;
+      bool isDamage = false;
+      int dIndex = 0;
+      double highesVal = widget.dType[0];
       for (var i = 0; i < dTypeName.length; i++) {
+        if (widget.dType[i] > widget.dType.last) {
+          isDamage = true;
+          if (widget.dType[i] > highesVal) {
+            highesVal = widget.dType[i];
+            dIndex = i;
+          }
+        }
         String txt =
             "${dTypeName[i]}: prediction confidence -> ${(widget.dType[i] * 100).toStringAsFixed(2)}%";
         dTypeW.add(Text(
@@ -72,6 +83,22 @@ class _ReportState extends State<Report> {
               fontStyle: FontStyle.normal,
               fontSize: 16),
         ));
+      }
+
+      if (isDamage) {
+        procceedOption = ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => InputPanel(
+                            dIndex: dIndex,
+                            tIndex: tIndex,
+                          )));
+            },
+            child: const Text('Procceed'));
+      } else {
+        procceedOption = const Text("NO DAMAGE WAS DECTED BY AI");
       }
     });
   }
@@ -125,6 +152,7 @@ class _ReportState extends State<Report> {
                     children: dTypeW,
                   ),
                 ),
+                procceedOption,
               ],
             ),
           ),

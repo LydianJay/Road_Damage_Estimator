@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class InputPanel extends StatefulWidget {
-  const InputPanel({super.key});
+  final int dIndex, tIndex;
+  const InputPanel({
+    super.key,
+    required this.dIndex,
+    required this.tIndex,
+  });
 
   @override
   State<InputPanel> createState() => _InputPanelState();
@@ -9,10 +14,20 @@ class InputPanel extends StatefulWidget {
 
 class _InputPanelState extends State<InputPanel> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Container(
-      child: Text("Template"),
-    ));
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Metrics"),
+        centerTitle: true,
+      ),
+      body: ListView(
+        children: [Text("${widget.dIndex}\n${widget.tIndex}")],
+      ),
+    );
   }
 }
