@@ -94,11 +94,36 @@ class _ReportState extends State<Report> {
                       builder: (context) => InputPanel(
                             dIndex: dIndex,
                             tIndex: tIndex,
+                            imgPath: widget.pathImg,
                           )));
             },
             child: const Text('Procceed'));
       } else {
-        procceedOption = const Text("NO DAMAGE WAS DECTED BY AI");
+        procceedOption = Container(
+            padding: const EdgeInsets.all(5),
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(31, 53, 193, 228),
+            ),
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  Color.fromARGB(31, 39, 157, 187),
+                  Colors.lightBlueAccent
+                ], stops: [
+                  0.0,
+                  0.9
+                ]),
+              ),
+              child: const Text(
+                "NO DAMAGE WAS DECTED BY AI",
+                style: TextStyle(
+                    color: Color.fromARGB(255, 43, 10, 134),
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Times New Roman',
+                    fontSize: 16,
+                    fontStyle: FontStyle.normal),
+              ),
+            ));
       }
     });
   }
@@ -116,9 +141,6 @@ class _ReportState extends State<Report> {
         children: [
           Container(
               padding: const EdgeInsets.all(5),
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(166, 196, 196, 202),
-              ),
               child: Image.file(File(widget.pathImg))),
           Container(
             decoration: const BoxDecoration(
@@ -130,7 +152,14 @@ class _ReportState extends State<Report> {
                   margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                   width: scrWidth,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(31, 53, 193, 228),
+                    //color: const Color.fromARGB(31, 53, 193, 228),
+                    gradient: const LinearGradient(colors: [
+                      Color.fromARGB(31, 39, 157, 187),
+                      Colors.lightBlueAccent
+                    ], stops: [
+                      0.0,
+                      0.8
+                    ]),
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
                         color: const Color.fromARGB(31, 39, 157, 187)),
@@ -143,7 +172,13 @@ class _ReportState extends State<Report> {
                   margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                   width: scrWidth,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(31, 53, 193, 228),
+                    gradient: const LinearGradient(colors: [
+                      Color.fromARGB(31, 39, 157, 187),
+                      Colors.lightBlueAccent
+                    ], stops: [
+                      0.0,
+                      0.8
+                    ]),
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
                         color: const Color.fromARGB(31, 39, 157, 187)),
