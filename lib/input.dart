@@ -116,8 +116,72 @@ class _InputPanelState extends State<InputPanel> {
                   ),
                 ),
                 Container(
-                    padding: const EdgeInsets.all(5),
+                    margin: const EdgeInsets.all(5),
                     child: Image.file(File(widget.imgPath))),
+                Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black54)),
+                    margin: const EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(5),
+                    child: Row(
+                      children: [
+                        Container(
+                            margin: const EdgeInsets.all(3),
+                            child: const Text('Width')),
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                          child: SizedBox(
+                            width: (scrWidth * 0.55),
+                            child: const TextField(
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  hintText: 'meters',
+                                  hintStyle: TextStyle(fontSize: 12)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+                Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black54)),
+                    margin: const EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(5),
+                    child: Row(
+                      children: [
+                        Container(
+                            margin: const EdgeInsets.all(3),
+                            child: const Text('Height')),
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                          child: SizedBox(
+                            width: (scrWidth * 0.55),
+                            child: const TextField(
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  hintText: 'meters',
+                                  hintStyle: TextStyle(fontSize: 12)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+                Container(
+                  margin: const EdgeInsets.all(25),
+                  child: FilledButton(
+                    onPressed: () {},
+                    style: const ButtonStyle(
+                      foregroundColor: MaterialStatePropertyAll<Color>(
+                          Color.fromARGB(255, 43, 10, 134)),
+                      backgroundColor: MaterialStatePropertyAll<Color>(
+                          Color.fromARGB(255, 39, 157, 187)),
+                      enableFeedback: true,
+                    ),
+                    child: const Text('SUBMIT'),
+                  ),
+                )
               ],
             ),
           ),
