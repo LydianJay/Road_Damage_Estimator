@@ -121,9 +121,6 @@ class _ReportState extends State<Report> {
       } else {
         procceedOption = Container(
             padding: const EdgeInsets.all(5),
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(31, 53, 193, 228),
-            ),
             child: Container(
               decoration: const BoxDecoration(
                 color: Color.fromARGB(255, 128, 128, 128),
@@ -131,7 +128,7 @@ class _ReportState extends State<Report> {
               child: const Text(
                 "NO DAMAGE WAS DECTED BY AI",
                 style: TextStyle(
-                    color: Color.fromARGB(255, 43, 10, 134),
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Times New Roman',
                     fontSize: 16,
