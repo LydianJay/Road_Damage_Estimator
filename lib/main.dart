@@ -19,7 +19,6 @@ class MyApp extends StatelessWidget {
   Widget build(context) {
     return MaterialApp(
       title: 'Road Damage Estimator Tool',
-      theme: ThemeData(primarySwatch: Colors.grey),
       home: HomePage(cameras: cameras),
     );
   }
@@ -129,9 +128,34 @@ class _state extends State<HomePage> {
   Widget build(BuildContext context) {
     double scrWidth = MediaQuery.of(context).size.width;
     double scrHeight = MediaQuery.of(context).size.height;
+    const ButtonStyle bStyle = ButtonStyle(
+      iconColor:
+          MaterialStatePropertyAll<Color>(Color.fromARGB(255, 255, 163, 26)),
+      backgroundColor:
+          MaterialStatePropertyAll<Color>(Color.fromARGB(255, 41, 41, 41)),
+    );
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Road Estimator Tool'),
+        backgroundColor: const Color.fromARGB(255, 27, 27, 27),
+        title: Container(
+          padding: EdgeInsets.all(scrWidth / 4),
+          child: Row(children: [
+            const Text('Road '),
+            Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(),
+                    color: const Color.fromARGB(255, 255, 163, 26)),
+                child: const Text(
+                  'Budgify',
+                  style: TextStyle(
+                      fontFamily: 'Helvetica',
+                      color: Color.fromARGB(255, 0, 0, 0)),
+                )),
+          ]),
+        ),
         centerTitle: true,
       ),
       body: FutureBuilder<void>(
@@ -155,7 +179,8 @@ class _state extends State<HomePage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          ElevatedButton(
+                          ElevatedButton.icon(
+                            style: bStyle,
                             onPressed: () {
                               captureImage().then((value) {
                                 Navigator.push(
@@ -168,9 +193,23 @@ class _state extends State<HomePage> {
                                             )));
                               });
                             },
-                            child: const Text('Capture'),
+                            icon: const Icon(Icons.camera_sharp),
+                            label: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(),
+                                    color: const Color.fromARGB(
+                                        255, 255, 163, 26)),
+                                child: const Text(
+                                  'Capture',
+                                  style: TextStyle(
+                                      fontFamily: 'Helvetica',
+                                      color: Color.fromARGB(255, 0, 0, 0)),
+                                )),
                           ),
-                          ElevatedButton(
+                          ElevatedButton.icon(
+                            style: bStyle,
                             onPressed: () {
                               pickImage().then((value) {
                                 Navigator.push(
@@ -183,7 +222,20 @@ class _state extends State<HomePage> {
                                             )));
                               });
                             },
-                            child: const Text('Gallery'),
+                            icon: const Icon(Icons.image),
+                            label: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(),
+                                    color: const Color.fromARGB(
+                                        255, 255, 163, 26)),
+                                child: const Text(
+                                  'Galery',
+                                  style: TextStyle(
+                                      fontFamily: 'Helvetica',
+                                      color: Color.fromARGB(255, 0, 0, 0)),
+                                )),
                           ),
                         ],
                       ),

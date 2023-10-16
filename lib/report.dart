@@ -20,13 +20,19 @@ class _ReportState extends State<Report> {
   List<Widget> dTypeW = [];
   List<Widget> rTypeW = [];
   late Widget procceedOption;
+  final ButtonStyle bStyle = const ButtonStyle(
+    iconColor:
+        MaterialStatePropertyAll<Color>(Color.fromARGB(255, 255, 163, 26)),
+    backgroundColor:
+        MaterialStatePropertyAll<Color>(Color.fromARGB(255, 41, 41, 41)),
+  );
   @override
   void initState() {
     super.initState();
     setState(() {
       rTypeW.add(const Text(
           style: TextStyle(
-              color: Color.fromARGB(255, 43, 10, 134),
+              color: Colors.white,
               fontFamily: 'New Times Roman',
               fontStyle: FontStyle.normal,
               fontSize: 24),
@@ -34,7 +40,7 @@ class _ReportState extends State<Report> {
 
       dTypeW.add(const Text(
           style: TextStyle(
-              color: Color.fromARGB(255, 43, 10, 134),
+              color: Colors.white,
               fontFamily: 'New Times Roman',
               fontStyle: FontStyle.normal,
               fontSize: 24),
@@ -54,7 +60,7 @@ class _ReportState extends State<Report> {
         rTypeW.add(Text(
           txt,
           style: const TextStyle(
-              color: Colors.black,
+              color: Color.fromARGB(255, 156, 156, 156),
               fontFamily: 'Arial',
               fontStyle: FontStyle.normal,
               fontSize: 16),
@@ -78,7 +84,7 @@ class _ReportState extends State<Report> {
         dTypeW.add(Text(
           txt,
           style: const TextStyle(
-              color: Colors.black,
+              color: Color.fromARGB(255, 156, 156, 156),
               fontFamily: 'Arial',
               fontStyle: FontStyle.normal,
               fontSize: 16),
@@ -86,18 +92,32 @@ class _ReportState extends State<Report> {
       }
 
       if (isDamage) {
-        procceedOption = ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => InputPanel(
-                            dIndex: dIndex,
-                            tIndex: tIndex,
-                            imgPath: widget.pathImg,
-                          )));
-            },
-            child: const Text('Procceed'));
+        procceedOption = ElevatedButton.icon(
+          style: bStyle,
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => InputPanel(
+                          dIndex: dIndex,
+                          tIndex: tIndex,
+                          imgPath: widget.pathImg,
+                        )));
+          },
+          icon: const Icon(Icons.arrow_circle_right_rounded),
+          label: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(),
+                  color: const Color.fromARGB(255, 255, 163, 26)),
+              child: const Text(
+                'Proceed',
+                style: TextStyle(
+                    fontFamily: 'Helvetica',
+                    color: Color.fromARGB(255, 0, 0, 0)),
+              )),
+        );
       } else {
         procceedOption = Container(
             padding: const EdgeInsets.all(5),
@@ -106,13 +126,7 @@ class _ReportState extends State<Report> {
             ),
             child: Container(
               decoration: const BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  Color.fromARGB(31, 39, 157, 187),
-                  Colors.lightBlueAccent
-                ], stops: [
-                  0.0,
-                  0.9
-                ]),
+                color: Color.fromARGB(255, 128, 128, 128),
               ),
               child: const Text(
                 "NO DAMAGE WAS DECTED BY AI",
@@ -134,63 +148,75 @@ class _ReportState extends State<Report> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Image Report"),
+        backgroundColor: const Color.fromARGB(255, 27, 27, 27),
+        title: Container(
+          padding: EdgeInsets.all(scrWidth / 8),
+          child: Row(children: [
+            const Text('Image '),
+            Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(),
+                    color: const Color.fromARGB(255, 255, 163, 26)),
+                child: const Text(
+                  'Report',
+                  style: TextStyle(
+                      fontFamily: 'Helvetica',
+                      color: Color.fromARGB(255, 0, 0, 0)),
+                )),
+          ]),
+        ),
         centerTitle: true,
       ),
       body: ListView(
         children: [
           Container(
-              padding: const EdgeInsets.all(5),
-              child: Image.file(File(widget.pathImg))),
-          Container(
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(166, 196, 196, 202),
-            ),
+            color: const Color.fromARGB(255, 27, 27, 27),
             child: Column(
               children: [
                 Container(
-                  margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  width: scrWidth,
-                  decoration: BoxDecoration(
-                    //color: const Color.fromARGB(31, 53, 193, 228),
-                    gradient: const LinearGradient(colors: [
-                      Color.fromARGB(31, 39, 157, 187),
-                      Colors.lightBlueAccent
-                    ], stops: [
-                      0.0,
-                      0.8
-                    ]),
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(
-                        color: const Color.fromARGB(31, 39, 157, 187)),
-                  ),
-                  child: Column(
-                    children: rTypeW,
-                  ),
-                ),
+                    padding: const EdgeInsets.all(5),
+                    child: Image.file(File(widget.pathImg))),
                 Container(
-                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  width: scrWidth,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(colors: [
-                      Color.fromARGB(31, 39, 157, 187),
-                      Colors.lightBlueAccent
-                    ], stops: [
-                      0.0,
-                      0.8
-                    ]),
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(
-                        color: const Color.fromARGB(31, 39, 157, 187)),
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 27, 27, 27),
                   ),
                   child: Column(
-                    children: dTypeW,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        width: scrWidth,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 41, 41, 41),
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                              color: const Color.fromARGB(31, 39, 157, 187)),
+                        ),
+                        child: Column(
+                          children: rTypeW,
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                        width: scrWidth,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 41, 41, 41),
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                              color: const Color.fromARGB(31, 39, 157, 187)),
+                        ),
+                        child: Column(
+                          children: dTypeW,
+                        ),
+                      ),
+                      procceedOption,
+                    ],
                   ),
                 ),
-                procceedOption,
               ],
             ),
-          ),
+          )
         ],
       ),
     );
