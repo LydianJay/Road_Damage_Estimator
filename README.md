@@ -1,8 +1,5 @@
-# Road Damage Reporting Tool
+# Road Damage Estimator Helper
 
 A flutter project for thesis requirement
 
-## Installation
-Download the latest apk from the release page.
-https://github.com/LydianJay/Road-Damage-Detection/releases
 
