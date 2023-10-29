@@ -34,7 +34,25 @@ class _InputPanelState extends State<InputPanel> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Configure"),
+        backgroundColor: const Color.fromARGB(255, 27, 27, 27),
+        title: Container(
+          padding: EdgeInsets.all(scrWidth / 8),
+          child: Row(children: [
+            const Text('Configure '),
+            Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(),
+                    color: const Color.fromARGB(255, 255, 163, 26)),
+                child: const Text(
+                  'Image',
+                  style: TextStyle(
+                      fontFamily: 'Helvetica',
+                      color: Color.fromARGB(255, 0, 0, 0)),
+                )),
+          ]),
+        ),
         centerTitle: true,
       ),
       body: ListView(
@@ -42,76 +60,80 @@ class _InputPanelState extends State<InputPanel> {
           Container(
             margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
             width: scrWidth,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [
-                Color.fromARGB(31, 39, 157, 187),
-                Colors.lightBlueAccent
-              ], stops: [
-                0.0,
-                0.8
-              ]),
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: const Color.fromARGB(31, 39, 157, 187)),
-            ),
+            color: const Color.fromARGB(255, 27, 27, 27),
             child: Column(
               children: [
                 Container(
                   padding: const EdgeInsets.all(5),
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black54)),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black54),
+                      color: const Color.fromARGB(255, 128, 128, 128)),
                   margin: const EdgeInsets.all(5),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const Text(
                           style: TextStyle(
-                              color: Color.fromARGB(255, 43, 10, 134),
+                              color: Colors.black,
                               fontFamily: 'New Times Roman',
                               fontStyle: FontStyle.normal,
                               fontSize: 24),
                           "Road Type"),
-                      DropdownMenu<String>(
-                          initialSelection: rTypeName[widget.tIndex],
-                          onSelected: (String? val) {
-                            setState(() {
-                              rSelect = rTypeName.indexOf(val!);
-                            });
-                          },
-                          dropdownMenuEntries: rTypeName
-                              .map<DropdownMenuEntry<String>>((String value) {
-                            return DropdownMenuEntry<String>(
-                                value: value, label: value);
-                          }).toList()),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 255, 163, 26),
+                          border: Border.all(color: Colors.white),
+                        ),
+                        child: DropdownMenu<String>(
+                            initialSelection: rTypeName[widget.tIndex],
+                            onSelected: (String? val) {
+                              setState(() {
+                                rSelect = rTypeName.indexOf(val!);
+                              });
+                            },
+                            dropdownMenuEntries: rTypeName
+                                .map<DropdownMenuEntry<String>>((String value) {
+                              return DropdownMenuEntry<String>(
+                                  value: value, label: value);
+                            }).toList()),
+                      ),
                     ],
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.all(5),
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black54)),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black54),
+                      color: const Color.fromARGB(255, 128, 128, 128)),
                   margin: const EdgeInsets.all(5),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const Text(
                           style: TextStyle(
-                              color: Color.fromARGB(255, 43, 10, 134),
+                              color: Colors.black,
                               fontFamily: 'New Times Roman',
                               fontStyle: FontStyle.normal,
                               fontSize: 24),
                           "Damage Type"),
-                      DropdownMenu<String>(
-                          onSelected: (String? val) {
-                            setState(() {
-                              dSelect = dTypeName.indexOf(val!);
-                            });
-                          },
-                          initialSelection: dTypeName[widget.dIndex],
-                          dropdownMenuEntries: dTypeName
-                              .map<DropdownMenuEntry<String>>((String value) {
-                            return DropdownMenuEntry<String>(
-                                value: value, label: value);
-                          }).toList()),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 255, 163, 26),
+                          border: Border.all(color: Colors.white),
+                        ),
+                        child: DropdownMenu<String>(
+                            onSelected: (String? val) {
+                              setState(() {
+                                dSelect = dTypeName.indexOf(val!);
+                              });
+                            },
+                            initialSelection: dTypeName[widget.dIndex],
+                            dropdownMenuEntries: dTypeName
+                                .map<DropdownMenuEntry<String>>((String value) {
+                              return DropdownMenuEntry<String>(
+                                  value: value, label: value);
+                            }).toList()),
+                      ),
                     ],
                   ),
                 ),
@@ -120,7 +142,8 @@ class _InputPanelState extends State<InputPanel> {
                     child: Image.file(File(widget.imgPath))),
                 Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black54)),
+                        border: Border.all(color: Colors.black54),
+                        color: const Color.fromARGB(255, 128, 128, 128)),
                     margin: const EdgeInsets.all(2),
                     padding: const EdgeInsets.all(5),
                     child: Row(
@@ -145,7 +168,8 @@ class _InputPanelState extends State<InputPanel> {
                     )),
                 Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black54)),
+                        border: Border.all(color: Colors.black54),
+                        color: const Color.fromARGB(255, 128, 128, 128)),
                     margin: const EdgeInsets.all(2),
                     padding: const EdgeInsets.all(5),
                     child: Row(
@@ -173,10 +197,10 @@ class _InputPanelState extends State<InputPanel> {
                   child: FilledButton(
                     onPressed: () {},
                     style: const ButtonStyle(
-                      foregroundColor: MaterialStatePropertyAll<Color>(
-                          Color.fromARGB(255, 43, 10, 134)),
+                      foregroundColor:
+                          MaterialStatePropertyAll<Color>(Colors.black),
                       backgroundColor: MaterialStatePropertyAll<Color>(
-                          Color.fromARGB(255, 39, 157, 187)),
+                          Color.fromARGB(255, 255, 163, 26)),
                       enableFeedback: true,
                     ),
                     child: const Text('SUBMIT'),
