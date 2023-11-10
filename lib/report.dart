@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'input.dart';
@@ -26,10 +28,34 @@ class _ReportState extends State<Report> {
     backgroundColor:
         MaterialStatePropertyAll<Color>(Color.fromARGB(255, 41, 41, 41)),
   );
+
+  int dTypeIdx = 0, rTypeIdx = 0;
+  double dMax = 0, rMax = 0;
+  // get the index of the highest value
+  void getIndexHighesVal() {
+    var dTypeList = widget.dType;
+    var rTypeList = widget.rType;
+    double max = dTypeList.first;
+    for (int i = 0; i < dTypeList.length; i++) {
+      if (dTypeList[i] > max) {
+        dTypeIdx = i;
+        max = dTypeList[i];
+      }
+    }
+    max = rTypeList.first;
+    for (int i = 0; i < rTypeList.length; i++) {
+      if (rTypeList[i] > max) {
+        rTypeIdx = i;
+        max = rTypeList[i];
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     setState(() {
+      getIndexHighesVal();
       rTypeW.add(const Text(
           style: TextStyle(
               color: Colors.white,
@@ -59,8 +85,10 @@ class _ReportState extends State<Report> {
             "${rTypeName[i]}: prediction confidence -> ${(widget.rType[i] * 100).toStringAsFixed(2)}%";
         rTypeW.add(Text(
           txt,
-          style: const TextStyle(
-              color: Color.fromARGB(255, 156, 156, 156),
+          style: TextStyle(
+              color: (i == rTypeIdx)
+                  ? const Color.fromARGB(255, 255, 163, 26)
+                  : const Color.fromARGB(255, 156, 156, 156),
               fontFamily: 'Arial',
               fontStyle: FontStyle.normal,
               fontSize: 16),
@@ -83,8 +111,10 @@ class _ReportState extends State<Report> {
             "${dTypeName[i]}: prediction confidence -> ${(widget.dType[i] * 100).toStringAsFixed(2)}%";
         dTypeW.add(Text(
           txt,
-          style: const TextStyle(
-              color: Color.fromARGB(255, 156, 156, 156),
+          style: TextStyle(
+              color: (i == dTypeIdx)
+                  ? const Color.fromARGB(255, 255, 163, 26)
+                  : const Color.fromARGB(255, 156, 156, 156),
               fontFamily: 'Arial',
               fontStyle: FontStyle.normal,
               fontSize: 16),
