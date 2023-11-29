@@ -25,10 +25,10 @@ class _PriceConfigPanelState extends State<PriceConfigPanel> {
     prefs = await SharedPreferences.getInstance();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    loadConfig();
+  /*
+  @param overide : tells the function to overide the data from the default values
+  */
+  void initSavedData({required bool overide}) async {
     loadTextFiles().then((raw) => {
           setState(() {
             const TextStyle tStyle = TextStyle(
@@ -76,7 +76,7 @@ class _PriceConfigPanelState extends State<PriceConfigPanel> {
                 if (count == 2) {
                   double? test = prefs.getDouble(itemName);
                   str = str.replaceAll(r',', '');
-                  if (test != null) {
+                  if (test != null && !overide) {
                     str = test.toString();
                     debugPrint('Read default saved value! $itemName');
                   }
@@ -144,6 +144,13 @@ class _PriceConfigPanelState extends State<PriceConfigPanel> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    loadConfig();
+    initSavedData(overide: false);
+  }
+
+  @override
   void dispose() {
     super.dispose();
     for (var d in priceControllers) {
@@ -185,36 +192,35 @@ class _PriceConfigPanelState extends State<PriceConfigPanel> {
                 const BoxDecoration(color: Color.fromARGB(255, 41, 41, 41)),
             child: Column(
               children: [
-                table,
-                /*TextField(
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  
-                  decoration: InputDecoration(
-                    label: Text('Asphalt:'),
-                    labelStyle: TextStyle(
-                        color: Color.fromARGB(255, 255, 163, 26),
-                        fontSize: 20,
+                Container(
+                  padding: const EdgeInsets.fromLTRB(0, 80, 0, 40),
+                  child: table,
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(0, 30, 0, 230),
+                  margin: const EdgeInsets.all(10),
+                  child: FilledButton(
+                    onPressed: () {
+                      initSavedData(overide: true);
+                    },
+                    style: const ButtonStyle(
+                      foregroundColor:
+                          MaterialStatePropertyAll<Color>(Colors.black),
+                      backgroundColor: MaterialStatePropertyAll<Color>(
+                          Color.fromARGB(255, 255, 163, 26)),
+                      enableFeedback: true,
+                    ),
+                    child: const Text(
+                      'Reset To Default',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w900,
                         fontFamily: 'Calibre',
-                        fontWeight: FontWeight.bold),
-                    hintText: 'meters',
-                    hintStyle: TextStyle(fontSize: 12),
+                      ),
+                    ),
                   ),
                 ),
-                TextField(
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    label: Text('Concrete Mix:'),
-                    labelStyle: TextStyle(
-                        color: Color.fromARGB(255, 255, 163, 26),
-                        fontSize: 20,
-                        fontFamily: 'Calibre',
-                        fontWeight: FontWeight.bold),
-                    hintText: 'meters',
-                    hintStyle: TextStyle(fontSize: 12),
-                  ),
-                ),*/
               ],
             ),
           ),
