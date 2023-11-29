@@ -34,7 +34,7 @@ class _CameraState extends State<CameraPanel> {
     loadModel();
   }
 
-  loadModel() async {
+  void loadModel() async {
     try {
       rTypeInterpreter = await Interpreter.fromAsset('assets/rType.tflite');
       dTypeInterpreter = await Interpreter.fromAsset('assets/dType.tflite');

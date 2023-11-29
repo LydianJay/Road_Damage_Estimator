@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 
+import 'package:pothole/estimationpanel.dart';
+
 class InputPanel extends StatefulWidget {
   final int dIndex, tIndex;
   final String imgPath;
@@ -195,7 +197,17 @@ class _InputPanelState extends State<InputPanel> {
                 Container(
                   margin: const EdgeInsets.all(25),
                   child: FilledButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EstimatePanel(
+                                    imgPath: widget.imgPath,
+                                    dType: 1,
+                                    rType: 1,
+                                    volume: 0.2,
+                                  )));
+                    },
                     style: const ButtonStyle(
                       foregroundColor:
                           MaterialStatePropertyAll<Color>(Colors.black),
