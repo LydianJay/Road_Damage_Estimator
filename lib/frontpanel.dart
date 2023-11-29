@@ -30,7 +30,7 @@ class FrontPanel extends StatelessWidget {
                   height: scrHeight * 0.45,
                   foregroundDecoration: const BoxDecoration(
                     image: DecorationImage(
-                        image: AssetImage("assets/images/SplashScreen.png"),
+                        image: AssetImage("assets/images/splash.png"),
                         fit: BoxFit.fitWidth),
                   ),
                 ),
