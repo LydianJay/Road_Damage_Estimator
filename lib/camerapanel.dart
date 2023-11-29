@@ -38,9 +38,9 @@ class _CameraState extends State<CameraPanel> {
     try {
       rTypeInterpreter = await Interpreter.fromAsset('assets/rType.tflite');
       dTypeInterpreter = await Interpreter.fromAsset('assets/dType.tflite');
-      debugPrint("Assets loaded!");
+      debugPrint("Models Loaded!");
     } catch (e) {
-      debugPrint("ERROR loading assets: $e");
+      debugPrint("ERROR loading models: $e");
     }
   }
 
@@ -50,7 +50,7 @@ class _CameraState extends State<CameraPanel> {
       imagePath = image.path;
       await predict(image.path);
     } catch (e) {
-      debugPrint('Error Occured!: $e');
+      debugPrint('Image capture failed!: $e');
     }
   }
 

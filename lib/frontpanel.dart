@@ -85,6 +85,31 @@ class FrontPanel extends StatelessWidget {
                         ),
                       ),
                     ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                      margin: const EdgeInsets.all(10),
+                      child: FilledButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/config');
+                        },
+                        style: const ButtonStyle(
+                          foregroundColor:
+                              MaterialStatePropertyAll<Color>(Colors.black),
+                          backgroundColor: MaterialStatePropertyAll<Color>(
+                              Color.fromARGB(255, 255, 163, 26)),
+                          enableFeedback: true,
+                        ),
+                        child: const Text(
+                          'Configure Prices',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                            fontFamily: 'Calibre',
+                          ),
+                        ),
+                      ),
+                    ),
                   ]),
                 ),
               ],

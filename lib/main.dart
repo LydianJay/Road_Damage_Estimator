@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:pothole/frontpanel.dart';
 import 'camerapanel.dart';
+import 'package:pothole/priceconfigpanel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
               cameras: cameras,
             ),
         '/camerapanel': (context) => CameraPanel(cameras: cameras),
+        '/config': (context) => const PriceConfigPanel(),
       },
     );
   }
