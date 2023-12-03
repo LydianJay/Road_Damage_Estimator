@@ -25,24 +25,101 @@ class _EstimatePanelState extends State<EstimatePanel> {
   final String temp =
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
+  final TextStyle tStyle = const TextStyle(
+    color: Color.fromARGB(255, 255, 163, 26),
+    fontSize: 14,
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.bold,
+    fontFamily: 'Arial',
+    decoration: TextDecoration.none,
+  );
+
+  List<double> unitCost = [];
+  List<double> usedPerUnit = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<Widget> displayRepairMethods() async {
+    String fileData = ' ';
+    String title = ' ';
+
+    const String init =
+        'Before initiating any road repair, its essential to ensure that the selected materials are suitable for the specific type and severity of the damage. Local climate conditions, traffic loads, and other factors should also be considered in material selection. Consulting with local road maintenance professionals or authorities can provide valuable guidance on the most appropriate materials for your specific situation.';
+
+    switch (widget.dType) {
+      case 0: // pothole
+        fileData = await rootBundle.loadString('assets/data/m_crack.txt');
+        title = 'Crack Repair:';
+
+        break;
+      case 1: // crack
+        fileData = await rootBundle.loadString('assets/data/m_pothole.txt');
+        title = 'Pothole Repair:';
+        break;
+      case 2: //raveling
+        fileData = await rootBundle.loadString('assets/data/m_raveling.txt');
+        title = 'Raveling Repair:';
+        break;
+    }
+
+    return Container(
+        padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontFamily: 'Calibre',
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.normal,
+                      color: yCol,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: Text(
+                  fileData,
+                  style: const TextStyle(
+                    fontFamily: 'Times new roman',
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal,
+                    fontStyle: FontStyle.normal,
+                    color: Colors.white,
+                    decoration: TextDecoration.none,
+                  ),
+                )),
+          ],
+        ));
+  }
+
+  List<double> getUsedPerUnit() {
+    return [];
+  }
+
   Future<Table> createCostTable() async {
     String raw = await rootBundle.loadString('assets/data/cement.data');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    const TextStyle tStyle = TextStyle(
-      color: Color.fromARGB(255, 255, 163, 26),
-      fontSize: 14,
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.bold,
-      fontFamily: 'Arial',
-      decoration: TextDecoration.none,
-    );
+
     List<TableRow> rows = [
       TableRow(
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 27, 27, 27),
           border: Border.all(color: Colors.black),
         ),
-        children: const [
+        children: [
           Text(
             'Material Description',
             textAlign: TextAlign.center,
@@ -130,7 +207,7 @@ class _EstimatePanelState extends State<EstimatePanel> {
           color: const Color.fromARGB(255, 41, 41, 41),
           border: Border.all(color: Colors.blueAccent),
         ),
-        children: const [
+        children: [
           Text(
             'Total Estimated cost',
             textAlign: TextAlign.center,
@@ -175,11 +252,6 @@ class _EstimatePanelState extends State<EstimatePanel> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
@@ -192,46 +264,20 @@ class _EstimatePanelState extends State<EstimatePanel> {
                 padding: const EdgeInsets.all(5),
                 child: Image.file(File(widget.imgPath)),
               ),
-              Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(10, 60, 0, 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Repair Method',
-                          style: TextStyle(
-                            fontFamily: 'Calibre',
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.normal,
-                            color: yCol,
-                            decoration: TextDecoration.none,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Text(
-                      temp,
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        fontFamily: 'Times new roman',
-                        fontSize: 24,
-                        fontWeight: FontWeight.normal,
-                        fontStyle: FontStyle.normal,
-                        color: Colors.white,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
+        ),
+        FutureBuilder(
+          future: displayRepairMethods(),
+          builder: ((context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Container(
+                  padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
+                  child: snapshot.requireData);
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          }),
         ),
         FutureBuilder(
           future: createCostTable(),
@@ -239,7 +285,25 @@ class _EstimatePanelState extends State<EstimatePanel> {
             if (snapshot.connectionState == ConnectionState.done) {
               return Container(
                   padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
-                  child: snapshot.requireData);
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                        child: Text(
+                          'Estimated Cost',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 255, 163, 26),
+                            fontSize: 24,
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Arial',
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ),
+                      snapshot.requireData,
+                    ],
+                  ));
             } else {
               return const Center(child: CircularProgressIndicator());
             }

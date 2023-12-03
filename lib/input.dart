@@ -178,7 +178,33 @@ class _InputPanelState extends State<InputPanel> {
                       children: [
                         Container(
                             margin: const EdgeInsets.all(3),
-                            child: const Text('Height')),
+                            child: const Text('Length')),
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                          child: SizedBox(
+                            width: (scrWidth * 0.55),
+                            child: const TextField(
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  hintText: 'meters',
+                                  hintStyle: TextStyle(fontSize: 12)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+                Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black54),
+                        color: const Color.fromARGB(255, 128, 128, 128)),
+                    margin: const EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(5),
+                    child: Row(
+                      children: [
+                        Container(
+                            margin: const EdgeInsets.all(3),
+                            child: const Text('Depth')),
                         Container(
                           margin: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                           child: SizedBox(
@@ -203,8 +229,8 @@ class _InputPanelState extends State<InputPanel> {
                           MaterialPageRoute(
                               builder: (context) => EstimatePanel(
                                     imgPath: widget.imgPath,
-                                    dType: 1,
-                                    rType: 1,
+                                    dType: dSelect,
+                                    rType: rSelect,
                                     volume: 0.2,
                                   )));
                     },
