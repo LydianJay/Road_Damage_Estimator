@@ -33,14 +33,13 @@ class _InputPanelState extends State<InputPanel> {
     double scrHeight = MediaQuery.of(context).size.height;
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          // <-- SEE HERE
           title: const Text('Empty Fields'),
           content: SizedBox(
             width: scrWidth,
-            height: scrHeight * 0.15,
+            height: scrHeight * 0.1,
             child: const Text('Please enter the necessary input fields'),
           ),
           actions: <Widget>[

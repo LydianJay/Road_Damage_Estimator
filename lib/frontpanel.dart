@@ -41,10 +41,10 @@ class _FrontPanelState extends State<FrontPanel> {
                   const Padding(
                     padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
                     child: Text(
-                      'Disclaimer: Image Classification Accuracy:',
+                      'Disclaimer',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Calibre',
                       ),

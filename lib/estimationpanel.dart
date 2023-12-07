@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class EstimatePanel extends StatefulWidget {
   final String imgPath;
@@ -22,10 +24,7 @@ class EstimatePanel extends StatefulWidget {
 
 class _EstimatePanelState extends State<EstimatePanel> {
   final Color yCol = const Color.fromARGB(255, 255, 163, 26);
-
-  final String temp =
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-
+  final ctrlScr = ScreenshotController();
   final TextStyle tStyle = const TextStyle(
     color: Color.fromARGB(255, 255, 163, 26),
     fontSize: 14,
@@ -136,7 +135,7 @@ class _EstimatePanelState extends State<EstimatePanel> {
       case 0: //crack
         ret['Rubberized Asphalt'] =
             widget.area * 2.5 * costPerUnit['Rubberized Asphalt']!;
-        ret['Rubberized Used'] = widget.area * 2.5;
+        ret['Rubberized Asphalt Used'] = widget.area * 2.5;
         break;
       case 1: // pothole
         ret['Cold Mix Asphalt'] =
@@ -269,15 +268,21 @@ class _EstimatePanelState extends State<EstimatePanel> {
       // dummy for now
       var mapVal = getCost();
       totalCost += mapVal[itemName]!;
+
+      for (var element in mapVal.keys) {
+        debugPrint('[keys:$element]');
+      }
+      rowConent.add(
+        Text(
+          mapVal.containsKey('$itemName Used')
+              ? mapVal['$itemName Used']!.toStringAsFixed(2)
+              : '0',
+          textAlign: TextAlign.center,
+          style: tStyle,
+        ),
+      );
       rowConent.add(Text(
-        mapVal.containsKey('$itemName Used')
-            ? mapVal['$itemName Used'].toString()
-            : '0',
-        textAlign: TextAlign.center,
-        style: tStyle,
-      ));
-      rowConent.add(Text(
-        mapVal[itemName].toString(),
+        mapVal[itemName]!.toStringAsFixed(2),
         textAlign: TextAlign.center,
         style: tStyle,
       ));
@@ -316,7 +321,7 @@ class _EstimatePanelState extends State<EstimatePanel> {
             style: tStyle,
           ),
           Text(
-            totalCost.toString(), // to be change (total Cost)
+            totalCost.toStringAsFixed(2),
             textAlign: TextAlign.center,
             style: tStyle,
           ),
@@ -371,27 +376,62 @@ class _EstimatePanelState extends State<EstimatePanel> {
           future: createCostTable(),
           builder: ((context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return Container(
-                  padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
-                  child: Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                        child: Text(
-                          'Estimated Cost',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 255, 163, 26),
-                            fontSize: 24,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Arial',
-                            decoration: TextDecoration.none,
+              return Column(
+                children: [
+                  Screenshot(
+                    controller: ctrlScr,
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
+                      child: Column(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                            child: Text(
+                              'Estimated Cost',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 255, 163, 26),
+                                fontSize: 24,
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Arial',
+                                decoration: TextDecoration.none,
+                              ),
+                            ),
                           ),
+                          snapshot.requireData,
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(10),
+                    child: FilledButton(
+                      onPressed: () {
+                        ctrlScr.capture().then((img) {
+                          //File('captured.png').writeAsBytes(img!.toList());
+                          ImageGallerySaver.saveImage(img!);
+                        });
+                      },
+                      style: const ButtonStyle(
+                        foregroundColor:
+                            MaterialStatePropertyAll<Color>(Colors.black),
+                        backgroundColor: MaterialStatePropertyAll<Color>(
+                            Color.fromARGB(255, 255, 163, 26)),
+                        enableFeedback: true,
+                      ),
+                      child: const Text(
+                        'Save Table As Image',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Calibre',
                         ),
                       ),
-                      snapshot.requireData,
-                    ],
-                  ));
+                    ),
+                  ),
+                ],
+              );
             } else {
               return const Center(child: CircularProgressIndicator());
             }

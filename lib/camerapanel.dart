@@ -20,14 +20,14 @@ class _CameraState extends State<CameraPanel> {
   late Interpreter dTypeInterpreter;
   late List<double> rTypeVal;
   late List<double> dTypeVal;
-  late String imagePath;
+  String imagePath = ' ';
   @override
   void initState() {
     super.initState();
 
     camController = CameraController(
       widget.cameras[0],
-      ResolutionPreset.veryHigh,
+      ResolutionPreset.high,
     );
     initControlerFuture = camController.initialize();
 
@@ -46,9 +46,9 @@ class _CameraState extends State<CameraPanel> {
 
   Future<void> captureImage() async {
     try {
-      final image = await camController.takePicture();
-      imagePath = image.path;
-      await predict(image.path);
+      final imgPath = await camController.takePicture();
+      imagePath = imgPath.path;
+      await predict(imgPath.path);
     } catch (e) {
       debugPrint('Image capture failed!: $e');
     }
@@ -56,9 +56,7 @@ class _CameraState extends State<CameraPanel> {
 
   Future<void> pickImage() async {
     final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(
-        source: ImageSource
-            .gallery); // You can also use ImageSource.camera to open the camera.
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
     final path = pickedImage!.path;
     imagePath = path;
     await predict(path);
@@ -66,6 +64,7 @@ class _CameraState extends State<CameraPanel> {
 
   Future<void> predict(String path) async {
     final bytes = await File(path).readAsBytes();
+
     final img.Image? capturedImage = img.decodeImage(bytes);
 
     if (capturedImage != null) {
@@ -90,10 +89,8 @@ class _CameraState extends State<CameraPanel> {
       final dOut = [List<double>.filled(4, 0)];
       rTypeInterpreter.run(input, rOut);
       dTypeInterpreter.run(input, dOut);
-      setState(() {
-        rTypeVal = rOut.first;
-        dTypeVal = dOut.first;
-      });
+      rTypeVal = rOut.first;
+      dTypeVal = dOut.first;
     }
   }
 
