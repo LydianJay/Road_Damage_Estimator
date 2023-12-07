@@ -107,16 +107,18 @@ class _ReportState extends State<Report> {
         }
         String txt =
             "${dTypeName[i]}: prediction confidence -> ${(widget.dType[i] * 100).toStringAsFixed(2)}%";
-        dTypeW.add(Text(
-          txt,
-          style: TextStyle(
-              color: (i == dTypeIdx)
-                  ? const Color.fromARGB(255, 255, 163, 26)
-                  : const Color.fromARGB(255, 156, 156, 156),
-              fontFamily: 'Arial',
-              fontStyle: FontStyle.normal,
-              fontSize: 16),
-        ));
+        if (i != 3) {
+          dTypeW.add(Text(
+            txt,
+            style: TextStyle(
+                color: (i == dTypeIdx)
+                    ? const Color.fromARGB(255, 255, 163, 26)
+                    : const Color.fromARGB(255, 156, 156, 156),
+                fontFamily: 'Arial',
+                fontStyle: FontStyle.normal,
+                fontSize: 16),
+          ));
+        }
       }
 
       if (isDamage) {

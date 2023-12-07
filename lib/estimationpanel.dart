@@ -6,13 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class EstimatePanel extends StatefulWidget {
   final String imgPath;
   final int dType, rType;
-  final double volume;
+  final double volume, area;
   const EstimatePanel({
     super.key,
     required this.imgPath,
     required this.dType,
     required this.rType,
     required this.volume,
+    required this.area,
   });
 
   @override
@@ -33,9 +34,7 @@ class _EstimatePanelState extends State<EstimatePanel> {
     fontFamily: 'Arial',
     decoration: TextDecoration.none,
   );
-
-  List<double> unitCost = [];
-  List<double> usedPerUnit = [];
+  Map<String, double> costPerUnit = {};
 
   @override
   void initState() {
@@ -47,7 +46,7 @@ class _EstimatePanelState extends State<EstimatePanel> {
     String title = ' ';
 
     const String init =
-        'Before initiating any road repair, its essential to ensure that the selected materials are suitable for the specific type and severity of the damage. Local climate conditions, traffic loads, and other factors should also be considered in material selection. Consulting with local road maintenance professionals or authorities can provide valuable guidance on the most appropriate materials for your specific situation.';
+        'Before initiating any road repair, its essential to ensure that the selected materials are suitable for the specific type and severity of the damage. Local climate conditions, traffic loads, and other factors should also be considered in material selection.';
 
     switch (widget.dType) {
       case 0: // pothole
@@ -101,17 +100,97 @@ class _EstimatePanelState extends State<EstimatePanel> {
                     decoration: TextDecoration.none,
                   ),
                 )),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+              child: Text(
+                init,
+                textAlign: TextAlign.justify,
+                style: TextStyle(
+                  fontFamily: 'Times new roman',
+                  fontSize: 20,
+                  fontWeight: FontWeight.normal,
+                  fontStyle: FontStyle.normal,
+                  color: Colors.white,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
           ],
         ));
   }
 
-  List<double> getUsedPerUnit() {
-    return [];
+  Map<String, double> getCost() {
+    Map<String, double> ret = Map.from(costPerUnit);
+
+    debugPrint('Uni cost lenth: ${costPerUnit.length}');
+
+    ret.forEach((name, value) {
+      ret[name] = 0;
+    });
+
+    costPerUnit.forEach((name, price) {
+      debugPrint('Item name: $name  : price $price');
+    });
+
+    switch (widget.dType) {
+      case 0: //crack
+        ret['Rubberized Asphalt'] =
+            widget.area * 2.5 * costPerUnit['Rubberized Asphalt']!;
+        ret['Rubberized Used'] = widget.area * 2.5;
+        break;
+      case 1: // pothole
+        ret['Cold Mix Asphalt'] =
+            widget.volume * 558.8 * costPerUnit['Cold Mix Asphalt']!;
+        ret['Cold Mix Asphalt Used'] = widget.volume * 558.8;
+        break;
+      case 2: // raveling
+        ret['Cold Mix Asphalt'] =
+            (widget.volume * 0.5) * 558.8 * costPerUnit['Cold Mix Asphalt']!;
+        ret['Cold Mix Asphalt Used'] = (widget.volume * 0.5) * 558.8;
+        ret['Fine Aggregate'] =
+            (widget.volume * 0.5) * costPerUnit['Fine Aggregate']!;
+        ret['Fine Aggregate Used'] =
+            (widget.volume * 0.5) * costPerUnit['Fine Aggregate']!;
+        break;
+    }
+
+    return ret;
+  }
+
+  Future<void> parseString(String raw) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    raw.split('\n').forEach((line) {
+      int count = 0;
+
+      String itemName = 'NULL';
+      line.split('\t').forEach((cell) {
+        if (count == 0) {
+          itemName = cell;
+        }
+        if (count == 2) {
+          double? test = prefs.getDouble(itemName);
+          cell = cell.replaceAll(r',', '');
+          if (test != null) {
+            cell = test.toString();
+
+            costPerUnit[itemName] = test;
+          }
+        }
+        count++;
+      });
+    });
   }
 
   Future<Table> createCostTable() async {
     String raw = await rootBundle.loadString('assets/data/cement.data');
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    await parseString(raw);
+
+    debugPrint('Count:  ${costPerUnit.length}');
+    costPerUnit.forEach((key, value) {
+      debugPrint("Key: $key, Value: $value");
+    });
 
     List<TableRow> rows = [
       TableRow(
@@ -148,12 +227,13 @@ class _EstimatePanelState extends State<EstimatePanel> {
         ],
       )
     ];
-
+    double totalCost = 0;
     raw.split('\n').forEach((line) {
       List<Widget> rowConent = [];
       int count = 0;
 
       String itemName = 'NULL';
+
       line.split('\t').forEach((cell) {
         if (count == 0) {
           itemName = cell;
@@ -163,6 +243,9 @@ class _EstimatePanelState extends State<EstimatePanel> {
           cell = cell.replaceAll(r',', '');
           if (test != null) {
             cell = test.toString();
+
+            costPerUnit[itemName] = test;
+
             debugPrint('Read default saved value! $itemName');
           }
 
@@ -184,13 +267,17 @@ class _EstimatePanelState extends State<EstimatePanel> {
         count++;
       });
       // dummy for now
+      var mapVal = getCost();
+      totalCost += mapVal[itemName]!;
       rowConent.add(Text(
-        '0.5',
+        mapVal.containsKey('$itemName Used')
+            ? mapVal['$itemName Used'].toString()
+            : '0',
         textAlign: TextAlign.center,
         style: tStyle,
       ));
       rowConent.add(Text(
-        '200',
+        mapVal[itemName].toString(),
         textAlign: TextAlign.center,
         style: tStyle,
       ));
@@ -229,7 +316,7 @@ class _EstimatePanelState extends State<EstimatePanel> {
             style: tStyle,
           ),
           Text(
-            '600', // to be change (total Cost)
+            totalCost.toString(), // to be change (total Cost)
             textAlign: TextAlign.center,
             style: tStyle,
           ),
@@ -237,6 +324,7 @@ class _EstimatePanelState extends State<EstimatePanel> {
       ),
     );
     debugPrint('Row count ${rows.length}');
+
     return Table(
       columnWidths: const <int, TableColumnWidth>{
         0: FlexColumnWidth(),

@@ -18,11 +18,42 @@ class InputPanel extends StatefulWidget {
 
 class _InputPanelState extends State<InputPanel> {
   late int dSelect, rSelect;
+  final TextEditingController ctrlLength = TextEditingController();
+  final TextEditingController ctrlWidth = TextEditingController();
+  final TextEditingController ctrlDepth = TextEditingController();
   @override
   void initState() {
     super.initState();
     dSelect = widget.dIndex;
     rSelect = widget.tIndex;
+  }
+
+  Future<void> _showAlertDialog() async {
+    double scrWidth = MediaQuery.of(context).size.width;
+    double scrHeight = MediaQuery.of(context).size.height;
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // <-- SEE HERE
+          title: const Text('Empty Fields'),
+          content: SizedBox(
+            width: scrWidth,
+            height: scrHeight * 0.15,
+            child: const Text('Please enter the necessary input fields'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Okay'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -157,10 +188,11 @@ class _InputPanelState extends State<InputPanel> {
                           margin: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                           child: SizedBox(
                             width: (scrWidth * 0.55),
-                            child: const TextField(
+                            child: TextField(
+                              controller: ctrlWidth,
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                   hintText: 'meters',
                                   hintStyle: TextStyle(fontSize: 12)),
                             ),
@@ -183,10 +215,11 @@ class _InputPanelState extends State<InputPanel> {
                           margin: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                           child: SizedBox(
                             width: (scrWidth * 0.55),
-                            child: const TextField(
+                            child: TextField(
+                              controller: ctrlLength,
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                   hintText: 'meters',
                                   hintStyle: TextStyle(fontSize: 12)),
                             ),
@@ -209,10 +242,11 @@ class _InputPanelState extends State<InputPanel> {
                           margin: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                           child: SizedBox(
                             width: (scrWidth * 0.55),
-                            child: const TextField(
+                            child: TextField(
+                              controller: ctrlDepth,
                               textAlign: TextAlign.center,
                               keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                   hintText: 'meters',
                                   hintStyle: TextStyle(fontSize: 12)),
                             ),
@@ -224,6 +258,15 @@ class _InputPanelState extends State<InputPanel> {
                   margin: const EdgeInsets.all(25),
                   child: FilledButton(
                     onPressed: () {
+                      if (double.tryParse(ctrlDepth.text) == null ||
+                          double.tryParse(ctrlLength.text) == null ||
+                          double.tryParse(ctrlWidth.text) == null) {
+                        _showAlertDialog();
+                      }
+
+                      double vol = double.parse(ctrlDepth.text) *
+                          double.parse(ctrlLength.text) *
+                          double.parse(ctrlWidth.text);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -231,7 +274,9 @@ class _InputPanelState extends State<InputPanel> {
                                     imgPath: widget.imgPath,
                                     dType: dSelect,
                                     rType: rSelect,
-                                    volume: 0.2,
+                                    volume: vol,
+                                    area: double.parse(ctrlLength.text) *
+                                        double.parse(ctrlWidth.text),
                                   )));
                     },
                     style: const ButtonStyle(
