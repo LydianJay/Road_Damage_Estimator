@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'input.dart';
 
+/// LydianJay - NOTE TO SELF
+/// Convert this to FutureBuilder
+
 class Report extends StatefulWidget {
   final String pathImg;
   final List<double> rType;
@@ -17,9 +20,16 @@ class Report extends StatefulWidget {
 }
 
 class _ReportState extends State<Report> {
+  /// Widget array to use for the damage type
   List<Widget> dTypeW = [];
+
+  /// Widger array to use for the road type
   List<Widget> rTypeW = [];
+
+  /// This widget will be a text when AI does not detect damage
+  /// But will be a button that procceds to the next panel
   late Widget procceedOption;
+
   final ButtonStyle bStyle = const ButtonStyle(
     iconColor:
         MaterialStatePropertyAll<Color>(Color.fromARGB(255, 255, 163, 26)),
@@ -29,7 +39,8 @@ class _ReportState extends State<Report> {
 
   int dTypeIdx = 0, rTypeIdx = 0;
   double dMax = 0, rMax = 0;
-  // get the index of the highest value
+
+  /// get the index of the highest value
   void getIndexHighesVal() {
     var dTypeList = widget.dType;
     var rTypeList = widget.rType;
@@ -156,7 +167,7 @@ class _ReportState extends State<Report> {
                 color: Color.fromARGB(255, 128, 128, 128),
               ),
               child: const Text(
-                "NO DAMAGE WAS DECTED BY AI",
+                "NO DAMAGE WAS DECTED OR CONFIDENCE TOO LOW",
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,

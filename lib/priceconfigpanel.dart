@@ -23,9 +23,8 @@ class _PriceConfigPanelState extends State<PriceConfigPanel> {
     prefs = await SharedPreferences.getInstance();
   }
 
-  /*
-  @param overide : tells the function to overide the data from the default values
-  */
+  /// Save default values or new values to disk
+  /// [overide] tells the this function to overide save to data
   void initSavedData({required bool overide}) async {
     loadTextFiles().then((raw) => {
           setState(() {

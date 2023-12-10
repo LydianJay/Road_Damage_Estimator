@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FrontPanel extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -11,6 +12,43 @@ class FrontPanel extends StatefulWidget {
 }
 
 class _FrontPanelState extends State<FrontPanel> {
+  /// This methods ensures that default pricing is save to disk
+  ///
+  void initialLoad() async {
+    String raw = await rootBundle.loadString('assets/data/cement.data');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    raw.split('\n').forEach((String line) {
+      int count = 0;
+
+      String itemName = 'NULL';
+      line.split('\t').forEach((str) {
+        if (count == 0) {
+          itemName = str;
+        }
+        if (count == 2) {
+          double? test = prefs.getDouble(itemName);
+          str = str.replaceAll(r',', '');
+          if (test != null) {
+            return;
+          } else {
+            prefs.setDouble(itemName, double.parse(str)).then((value) => {
+                  debugPrint(
+                      value ? 'successfully saved $itemName' : 'failed saving')
+                });
+          }
+        }
+        count++;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialLoad(); // load default values for the prices
+  }
+
+  /// Loads the front screen with all the buttons, text and splash screen
   Future<Widget> loadFrontWidget(double scrWidth, double scrHeight) async {
     String text = await rootBundle.loadString('assets/data/disclosure.txt');
 

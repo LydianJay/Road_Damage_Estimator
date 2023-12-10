@@ -144,12 +144,12 @@ class _EstimatePanelState extends State<EstimatePanel> {
         break;
       case 2: // raveling
         ret['Cold Mix Asphalt'] =
-            (widget.volume * 0.5) * 558.8 * costPerUnit['Cold Mix Asphalt']!;
-        ret['Cold Mix Asphalt Used'] = (widget.volume * 0.5) * 558.8;
+            (widget.volume * 0.25) * 558.8 * costPerUnit['Cold Mix Asphalt']!;
+        ret['Cold Mix Asphalt Used'] = (widget.volume * 0.25) * 558.8;
         ret['Fine Aggregate'] =
-            (widget.volume * 0.5) * costPerUnit['Fine Aggregate']!;
+            (widget.volume * 0.75) * costPerUnit['Fine Aggregate']!;
         ret['Fine Aggregate Used'] =
-            (widget.volume * 0.5) * costPerUnit['Fine Aggregate']!;
+            (widget.volume * 0.75) * costPerUnit['Fine Aggregate']!;
         break;
     }
 
@@ -158,12 +158,13 @@ class _EstimatePanelState extends State<EstimatePanel> {
 
   Future<void> parseString(String raw) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    costPerUnit = {};
     raw.split('\n').forEach((line) {
       int count = 0;
 
       String itemName = 'NULL';
       line.split('\t').forEach((cell) {
+        debugPrint('count: $count');
         if (count == 0) {
           itemName = cell;
         }
@@ -172,13 +173,14 @@ class _EstimatePanelState extends State<EstimatePanel> {
           cell = cell.replaceAll(r',', '');
           if (test != null) {
             cell = test.toString();
-
+            debugPrint('adding cost');
             costPerUnit[itemName] = test;
           }
         }
         count++;
       });
     });
+    debugPrint('Done parsing, length: ${costPerUnit.length}');
   }
 
   Future<Table> createCostTable() async {

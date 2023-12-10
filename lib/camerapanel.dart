@@ -10,7 +10,7 @@ class CameraPanel extends StatefulWidget {
   final List<CameraDescription> cameras;
   const CameraPanel({Key? key, required this.cameras}) : super(key: key);
   @override
-  _CameraState createState() => _CameraState();
+  State<CameraPanel> createState() => _CameraState();
 }
 
 class _CameraState extends State<CameraPanel> {
@@ -18,7 +18,11 @@ class _CameraState extends State<CameraPanel> {
   late Future<void> initControlerFuture;
   late Interpreter rTypeInterpreter;
   late Interpreter dTypeInterpreter;
+
+  /// road type prediction values
   late List<double> rTypeVal;
+
+  /// damage type prediction values
   late List<double> dTypeVal;
   String imagePath = ' ';
   @override
@@ -34,6 +38,7 @@ class _CameraState extends State<CameraPanel> {
     loadModel();
   }
 
+  /// Loads the tflite model
   void loadModel() async {
     try {
       rTypeInterpreter = await Interpreter.fromAsset('assets/rType.tflite');
@@ -44,6 +49,7 @@ class _CameraState extends State<CameraPanel> {
     }
   }
 
+  /// Captures image and run the prediction
   Future<void> captureImage() async {
     try {
       final imgPath = await camController.takePicture();
@@ -54,6 +60,7 @@ class _CameraState extends State<CameraPanel> {
     }
   }
 
+  /// Pickes image from gallery and run prediction
   Future<void> pickImage() async {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
@@ -62,6 +69,7 @@ class _CameraState extends State<CameraPanel> {
     await predict(path);
   }
 
+  /// Runs prediction with the specified image
   Future<void> predict(String path) async {
     final bytes = await File(path).readAsBytes();
 
