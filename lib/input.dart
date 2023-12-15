@@ -151,6 +151,7 @@ class _InputPanelState extends State<InputPanel> {
                       Container(
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 255, 163, 26),
+                          borderRadius: BorderRadius.circular(0.45),
                           border: Border.all(color: Colors.white),
                         ),
                         child: DropdownMenu<String>(

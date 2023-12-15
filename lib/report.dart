@@ -105,12 +105,11 @@ class _ReportState extends State<Report> {
       }
 
       int tIndex = widget.rType[0] >= widget.rType[1] ? 0 : 1;
-      bool isDamage = false;
+
       int dIndex = 0;
       double highesVal = widget.dType[0];
       for (var i = 0; i < dTypeName.length; i++) {
         if (widget.dType[i] > widget.dType.last) {
-          isDamage = true;
           if (widget.dType[i] > highesVal) {
             highesVal = widget.dType[i];
             dIndex = i;
@@ -122,7 +121,7 @@ class _ReportState extends State<Report> {
           dTypeW.add(Text(
             txt,
             style: TextStyle(
-                color: (i == dTypeIdx)
+                color: (i == dTypeIdx && highesVal >= 0.85)
                     ? const Color.fromARGB(255, 255, 163, 26)
                     : const Color.fromARGB(255, 156, 156, 156),
                 fontFamily: 'Arial',
@@ -132,7 +131,7 @@ class _ReportState extends State<Report> {
         }
       }
 
-      if (isDamage) {
+      if (highesVal >= 0.85) {
         procceedOption = ElevatedButton.icon(
           style: bStyle,
           onPressed: () {
@@ -166,14 +165,17 @@ class _ReportState extends State<Report> {
               decoration: const BoxDecoration(
                 color: Color.fromARGB(255, 128, 128, 128),
               ),
-              child: const Text(
-                "NO DAMAGE WAS DECTED OR CONFIDENCE TOO LOW",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Times New Roman',
-                    fontSize: 16,
-                    fontStyle: FontStyle.normal),
+              child: const Center(
+                child: Text(
+                  "NO DAMAGE WAS DECTED OR CONFIDENCE TOO LOW",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Times New Roman',
+                      fontSize: 16,
+                      fontStyle: FontStyle.normal),
+                ),
               ),
             ));
       }
